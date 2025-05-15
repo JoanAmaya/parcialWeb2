@@ -20,7 +20,7 @@ semestre: number;
 @Column()
 programa: string;
 @Column()
-promedio: string;
+promedio: number;
 @OneToMany(() => ProyectoEntity, (proyecto) => proyecto.estudiante)
 proyectos: ProyectoEntity[];
 
