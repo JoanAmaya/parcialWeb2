@@ -17,7 +17,7 @@ export class ProfesorService {
     private readonly evaluacionEntity: Repository<EvaluacionEntity>,
   ) {}
   async crearProfesor(profesor: ProfesorEntity): Promise<ProfesorEntity> {
-    if (profesor.extension.toString.length == 5)
+    if (profesor.extension.toString().length == 5)
       return await this.profesorRepository.save(profesor);
     else
       throw new BusinessLogicException(
@@ -31,6 +31,7 @@ export class ProfesorService {
   ): Promise<ProfesorEntity> {
     const profesorEntity = await this.profesorRepository.findOne({
       where: { id: idProfesor },
+      relations: ['evaluaciones'],
     });
     if (!profesorEntity) {
       throw new BusinessLogicException(
@@ -38,6 +39,7 @@ export class ProfesorService {
         BusinessError.NOT_FOUND,
       );
     }
+
     const evaluacionEntity = await this.evaluacionEntity.findOne({
       where: { id: idEvaluacion },
     });
@@ -47,15 +49,27 @@ export class ProfesorService {
         BusinessError.NOT_FOUND,
       );
     }
-    if (profesorEntity.evaluaciones.length > 3) {
+
+    if (profesorEntity.evaluaciones.length >= 3) {
       throw new BusinessLogicException(
         'El profesor tiene mas de 3 evaluaciones',
         BusinessError.PRECONDITION_FAILED,
       );
     }
-    profesorEntity.evaluaciones.push(evaluacionEntity);
-    await this.profesorRepository.save(profesorEntity);
 
-    return profesorEntity;
+    evaluacionEntity.profesor = profesorEntity;
+    await this.evaluacionEntity.save(evaluacionEntity);
+    const profesorCreado = await this.profesorRepository.findOne({
+      where: { id: idProfesor },
+      relations: ['evaluaciones'],
+    });
+    if (!profesorCreado) {
+      throw new BusinessLogicException(
+        'No se pudo guardar la relacion',
+        BusinessError.BAD_REQUEST,
+      );
+    }
+
+    return profesorCreado;
   }
 }

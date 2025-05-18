@@ -50,86 +50,87 @@ describe('EstudianteService', () => {
   });
 
   it('debería lanzar una excepción si el promedio o semestre no cumple los requisitos', async () => {
-  const estudianteEntity: EstudianteEntity = {
-    cedula: 123456789,
-    nombre: 'Carlos',
-    programa: 'Ingeniería',
-    promedio: 3.0, // menor a 3.2
-    semestre: 4,
-    proyectos: [],
-    id: 2,
-  };
+    const estudianteEntity: EstudianteEntity = {
+      cedula: 123456789,
+      nombre: 'Carlos',
+      programa: 'Ingeniería',
+      promedio: 3.0, // menor a 3.2
+      semestre: 4,
+      proyectos: [],
+      id: 2,
+    };
 
-  await expect(service.crearEstudiante(estudianteEntity)).rejects.toHaveProperty(
-    'message',
-    'El codigo del estudiante no tiene 10 caracteres',
-  );
-});
-
-it('debería eliminar el estudiante si no tiene proyectos', async () => {
-  const estudiante: EstudianteEntity = await repository.save({
-    cedula: 987654321,
-    nombre: 'Ana',
-    programa: 'Matemáticas',
-    promedio: 3.5,
-    semestre: 5,
-    proyectos: [],
+    await expect(
+      service.crearEstudiante(estudianteEntity),
+    ).rejects.toHaveProperty(
+      'message',
+      'El codigo del estudiante no tiene 10 caracteres',
+    );
   });
 
-  await service.eliminarEstudiante(estudiante.id);
+  it('debería eliminar el estudiante si no tiene proyectos', async () => {
+    const estudiante: EstudianteEntity = await repository.save({
+      cedula: 987654321,
+      nombre: 'Ana',
+      programa: 'Matemáticas',
+      promedio: 3.5,
+      semestre: 5,
+      proyectos: [],
+    });
 
-  const result = await repository.findOne({ where: { id: estudiante.id } });
-  expect(result).toBeNull();
-});
-it('debería lanzar una excepción si el estudiante tiene proyectos activos', async () => {
-  // Crear módulo incluyendo también el EstudianteService
-  const module: TestingModule = await Test.createTestingModule({
-    imports: [...TypeOrmTestingConfig()],
-    providers: [EstudianteService],
-  }).compile();
+    await service.eliminarEstudiante(estudiante.id);
 
-  const proyectoRepo = module.get<Repository<ProyectoEntity>>(
-    getRepositoryToken(ProyectoEntity),
-  );
-  const estudianteRepo = module.get<Repository<EstudianteEntity>>(
-    getRepositoryToken(EstudianteEntity),
-  );
-  const service = module.get<EstudianteService>(EstudianteService);
-
-  // 1. Crear estudiante
-  const estudiante = await estudianteRepo.save({
-    cedula: 111111111,
-    nombre: 'Luis',
-    programa: 'Matemáticas',
-    promedio: 4.5,
-    semestre: 6,
+    const result = await repository.findOne({ where: { id: estudiante.id } });
+    expect(result).toBeNull();
   });
+  it('debería lanzar una excepción si el estudiante tiene proyectos activos', async () => {
+    // Crear módulo incluyendo también el EstudianteService
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [...TypeOrmTestingConfig()],
+      providers: [EstudianteService],
+    }).compile();
 
-  // 2. Crear proyecto con relación al estudiante
-  await proyectoRepo.save({
-    titulo: 'Proyecto A',
-    area: 'Física',
-    presupuesto: 10000,
-    notaFinal: 4.5,
-    estado: 1,
-    fechaInicio: 20230101,
-    fechaFin: 20231231,
-    estudiante: estudiante, // relación aquí es suficiente
+    const proyectoRepo = module.get<Repository<ProyectoEntity>>(
+      getRepositoryToken(ProyectoEntity),
+    );
+    const estudianteRepo = module.get<Repository<EstudianteEntity>>(
+      getRepositoryToken(EstudianteEntity),
+    );
+    const service = module.get<EstudianteService>(EstudianteService);
+
+    // 1. Crear estudiante
+    const estudiante = await estudianteRepo.save({
+      cedula: 111111111,
+      nombre: 'Luis',
+      programa: 'Matemáticas',
+      promedio: 4.5,
+      semestre: 6,
+    });
+
+    // 2. Crear proyecto con relación al estudiante
+    await proyectoRepo.save({
+      titulo: 'Proyecto A',
+      area: 'Física',
+      presupuesto: 10000,
+      notaFinal: 4.5,
+      estado: 1,
+      fechaInicio: 20230101,
+      fechaFin: 20231231,
+      estudiante: estudiante, // relación aquí es suficiente
+    });
+
+    // 3. Recargar estudiante con relación `proyectos`
+    const estudianteRecargado = await estudianteRepo.findOne({
+      where: { id: estudiante.id },
+      relations: ['proyectos'],
+    });
+
+    // Verifica que efectivamente tenga proyectos
+    expect(estudianteRecargado?.proyectos.length).toBeGreaterThan(0);
+
+    // 4. Ejecuta la prueba
+    await expect(
+      service.eliminarEstudiante(estudiante.id),
+    ).rejects.toHaveProperty('message', 'estudiante con proyectos activos');
   });
-
-  // 3. Recargar estudiante con relación `proyectos`
-  const estudianteRecargado = await estudianteRepo.findOne({
-    where: { id: estudiante.id },
-    relations: ['proyectos'],
-  });
-
-  // Verifica que efectivamente tenga proyectos
-  expect(estudianteRecargado?.proyectos.length).toBeGreaterThan(0);
-
-  // 4. Ejecuta la prueba
-  await expect(
-    service.eliminarEstudiante(estudiante.id),
-  ).rejects.toHaveProperty('message', 'estudiante con proyectos activos');
-});
-
 });
