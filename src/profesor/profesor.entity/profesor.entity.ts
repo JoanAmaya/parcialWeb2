@@ -14,10 +14,9 @@ export class ProfesorEntity {
   @Column()
   extension: number;
   @Column()
-  esParEvaluadro: boolean;
+  esParEvaluador: boolean;
   @OneToMany(() => ProyectoEntity, (proyecto) => proyecto.profesor)
   proyectos: ProyectoEntity[];
   @OneToMany(() => EvaluacionEntity, (evaluacion) => evaluacion.profesor)
   evaluaciones: EvaluacionEntity[];
-  
 }
