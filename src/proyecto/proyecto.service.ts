@@ -13,8 +13,6 @@ export class ProyectoService {
   constructor(
     @InjectRepository(ProyectoEntity)
     private readonly proyectoRepository: Repository<ProyectoEntity>,
-    @InjectRepository(EstudianteEntity)
-    private readonly estudianteRepository: Repository<EstudianteEntity>,
   ) {}
   async crearProyecto(proyecto: ProyectoEntity): Promise<ProyectoEntity> {
     if (proyecto.presupuesto > 0 && proyecto.titulo.length > 15)
