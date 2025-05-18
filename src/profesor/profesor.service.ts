@@ -16,7 +16,7 @@ export class ProfesorService {
     @InjectRepository(EvaluacionEntity)
     private readonly evaluacionEntity: Repository<EvaluacionEntity>,
   ) {}
-  async crearEvaluación(profesor: ProfesorEntity): Promise<ProfesorEntity> {
+  async crearProfesor(profesor: ProfesorEntity): Promise<ProfesorEntity> {
     if (profesor.extension.toString.length == 5)
       return await this.profesorRepository.save(profesor);
     else
