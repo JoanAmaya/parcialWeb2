@@ -27,6 +27,7 @@ export class ProyectoService {
   async avanzarProyecto(id: number): Promise<ProyectoEntity> {
     const persistedProyecto = await this.proyectoRepository.findOne({
       where: { id },
+      relations: ['estudiante'],
     });
 
     if (!persistedProyecto) {
@@ -46,10 +47,17 @@ export class ProyectoService {
   async findAll(idProyecto: number): Promise<EstudianteEntity> {
     const proyecto = await this.proyectoRepository.findOne({
       where: { id: idProyecto },
+      relations: ['estudiante'],
     });
     if (!proyecto) {
       throw new BusinessLogicException(
         'No se encontro el proyecto',
+        BusinessError.NOT_FOUND,
+      );
+    }
+    if (!proyecto.estudiante) {
+      throw new BusinessLogicException(
+        'No hay estudiantes',
         BusinessError.NOT_FOUND,
       );
     }

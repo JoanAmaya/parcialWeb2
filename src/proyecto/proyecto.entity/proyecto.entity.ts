@@ -27,10 +27,14 @@ export class ProyectoEntity {
   fechaInicio: number;
   @Column()
   fechaFin: number;
-  @ManyToOne(() => EstudianteEntity, (estudiante) => estudiante.proyectos)
-  estudiante: EstudianteEntity;
-  @ManyToOne(() => ProfesorEntity, (profesor) => profesor.proyectos)
-  profesor: ProfesorEntity;
+  @ManyToOne(() => EstudianteEntity, (estudiante) => estudiante.proyectos, {
+    nullable: true,
+  })
+  estudiante?: EstudianteEntity;
+  @ManyToOne(() => ProfesorEntity, (profesor) => profesor.proyectos, {
+    nullable: true,
+  })
+  profesor?: ProfesorEntity;
   @OneToMany(() => EvaluacionEntity, (evaluacion) => evaluacion.proyecto)
   evaluaciones: EvaluacionEntity[];
 }

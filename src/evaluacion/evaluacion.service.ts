@@ -16,6 +16,12 @@ export class EvaluacionService {
   async crearEvaluación(
     evaluacion: EvaluacionEntity,
   ): Promise<EvaluacionEntity> {
+    if (!evaluacion.proyecto) {
+      return await this.evaluacionRepository.save(evaluacion);
+    }
+    if (!evaluacion.proyecto.estudiante) {
+      return await this.evaluacionRepository.save(evaluacion);
+    }
     if (
       evaluacion.profesor.cedula != evaluacion.proyecto.estudiante.cedula &&
       evaluacion.proyecto.notaFinal >= 0 &&
