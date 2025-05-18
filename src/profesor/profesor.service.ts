@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 import {
   BusinessError,
   BusinessLogicException,
-} from 'src/shared/errors/business-errors';
-import { EvaluacionEntity } from 'src/evaluacion/evaluacion.entity/evaluacion.entity';
+} from '../shared/errors/business-errors';
+import { EvaluacionEntity } from '../evaluacion/evaluacion.entity/evaluacion.entity';
 
 @Injectable()
 export class ProfesorService {
