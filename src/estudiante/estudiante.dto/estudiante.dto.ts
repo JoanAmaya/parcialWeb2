@@ -11,6 +11,9 @@ export class EstudianteDTO {
   @IsNumber()
   @IsNotEmpty()
   readonly semestre: number;
+  @IsNumber()
+  @IsNotEmpty()
+  readonly promedio: number;
 
   @IsString()
   @IsNotEmpty()

@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "edb2e35e-6f43-47e6-9e50-249894d59ef8",
+		"name": "Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42449152",
+		"_collection_link": "https://seguridadcloud.postman.co/workspace/NestTest~c1d68c40-a9a7-408e-9974-2d6e89c63568/collection/42449152-edb2e35e-6f43-47e6-9e50-249894d59ef8?action=share&source=collection_link&creator=42449152"
+	},
+	"item": [
+		{
+			"name": "Crear nuevo estudiante",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Debe retornar 201 Created\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"El cuerpo de la respuesta debe tener los campos correctos\", function () {\r",
+							"  const res = pm.response.json();\r",
+							"  pm.expect(res).to.have.property(\"id\");\r",
+							"  pm.expect(res).to.have.property(\"cedula\", 123456789);\r",
+							"  pm.expect(res).to.have.property(\"nombre\", \"Juan Pérez\");\r",
+							"  pm.expect(res).to.have.property(\"semestre\", 4);\r",
+							"  pm.expect(res).to.have.property(\"programa\", \"Ingeniería de Sistemas\");\r",
+							"  pm.expect(res).to.have.property(\"promedio\", 4);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"cedula\": 123456789,\r\n  \"nombre\": \"Juan Pérez\",\r\n  \"semestre\": 4,\r\n  \"promedio\": 4,\r\n  \"programa\": \"Ingeniería de Sistemas\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/v1/estudiante",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"estudiante"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear nuevo estudiante Mal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Debe retornar 412 Precondition Failed\", function () {\r",
+							"  pm.response.to.have.status(412);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Debe retornar el mensaje de error esperado\", function () {\r",
+							"  const res = pm.response.json();\r",
+							"  pm.expect(res).to.have.property(\"message\");\r",
+							"  pm.expect(res.message).to.include(\"El codigo del estudiante no tiene 10 caracteres\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"cedula\": 123456789,\r\n  \"nombre\": \"Juan Pérez\",\r\n  \"semestre\": 4,\r\n  \"promedio\": 2,\r\n  \"programa\": \"Ingeniería de Sistemas\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/v1/estudiante",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"estudiante"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear profesor",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Debe retornar 201 Created\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Debe retornar el profesor con los campos correctos\", function () {\r",
+							"  const res = pm.response.json();\r",
+							"  pm.expect(res).to.have.property(\"id\");\r",
+							"  pm.expect(res).to.have.property(\"cedula\", 987654321);\r",
+							"  pm.expect(res).to.have.property(\"nombre\", \"Marta Rojas\");\r",
+							"  pm.expect(res).to.have.property(\"departamento\", \"Ingeniería Industrial\");\r",
+							"  pm.expect(res).to.have.property(\"extension\", 12345);\r",
+							"  pm.expect(res).to.have.property(\"esParEvaluador\", true);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"cedula\": 987654321,\r\n  \"nombre\": \"Marta Rojas\",\r\n  \"departamento\": \"Ingeniería Industrial\",\r\n  \"extension\": 12345,\r\n  \"esParEvaluador\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/v1/profesor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"profesor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear profesor Mal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Debe retornar 412 Precondition Failed\", function () {\r",
+							"  pm.response.to.have.status(412);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Debe contener mensaje de error de precondición\", function () {\r",
+							"  const res = pm.response.json();\r",
+							"  pm.expect(res).to.have.property(\"message\", \"Error precondicion\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"cedula\": 987654321,\r\n  \"nombre\": \"Marta Rojas\",\r\n  \"departamento\": \"Ingeniería Industrial\",\r\n  \"extension\": 123456,\r\n  \"esParEvaluador\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/v1/profesor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"profesor"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
